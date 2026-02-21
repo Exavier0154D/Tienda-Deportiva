@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Deportiva - Sistema de Inventario</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">
+        <i class="fas fa-running"></i>
+        <h2>SportStock</h2>
+    </div>
+    <nav class="menu">
+        <a href="#" class="menu-item active" data-page="dashboard">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="menu-item" data-page="productos">
+            <i class="fas fa-box"></i>
+            <span>Productos</span>
+        </a>
+        <a href="#" class="menu-item" data-page="categorias">
+            <i class="fas fa-tags"></i>
+            <span>Categorías</span>
+        </a>
+        <a href="#" class="menu-item" data-page="proveedores">
+            <i class="fas fa-truck"></i>
+            <span>Proveedores</span>
+        </a>
+        <a href="#" class="menu-item" data-page="movimientos">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Movimientos</span>
+        </a>
+        <a href="#" class="menu-item" data-page="stock-bajo">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Stock Bajo</span>
+        </a>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 id="page-title">Dashboard</h1>
+            <p id="page-subtitle">Bienvenido al sistema de inventario</p>
+        </div>
+        <div class="header-right">
+            <button class="btn-icon" id="btn-refresh">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>Admin</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Page -->
+    <div class="page active" id="dashboard-page">
+        <div class="stats-grid">
+            <div class="stat-card stat-primary">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-productos">0</h3>
+                    <p>Total Productos</p>
+                </div>
+            </div>
+            <div class="stat-card stat-success">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="valor-inventario">$0.00</h3>
+                    <p>Valor Inventario</p>
+                </div>
+            </div>
+            <div class="stat-card stat-warning">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="stock-bajo-count">0</h3>
+                    <p>Productos Stock Bajo</p>
+                </div>
+            </div>
+            <div class="stat-card stat-info">
+                <div class="stat-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-categorias">0</h3>
+                    <p>Categorías</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-line"></i> Productos con Bajo Stock</h3>
+                </div>
+                <div class="card-body">
+                    <div id="stock-bajo-preview"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos Page -->
+    <div class="page" id="productos-page">
+        <div class="page-header">
+            <button class="btn btn-primary" id="btn-nuevo-producto">
+                <i class="fas fa-plus"></i> Nuevo Producto
+            </button>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-productos" placeholder="Buscar productos...">
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <table class="data-table" id="productos-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock Actual</th>
+                        <th>Stock Mínimo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="productos-tbody">
+                    <tr>
+                        <td colspan="8" class="loading">Cargando productos...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categorías Page -->
+    <div class="page" id="categorias-page">
+        <div class="page-header">
+            <button class="btn btn-primary" id="btn-nueva-categoria">
+                <i class="fas fa-plus"></i> Nueva Categoría
+            </button>
+        </div>
+        <div class="categories-grid" id="categorias-grid">
+            <div class="loading">Cargando categorías...</div>
+        </div>
+    </div>
+
+    <!-- Proveedores Page -->
+    <div class="page" id="proveedores-page">
+        <div class="page-header">
+            <button class="btn btn-primary" id="btn-nuevo-proveedor">
+                <i class="fas fa-plus"></i> Nuevo Proveedor
+            </button>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <table class="data-table" id="proveedores-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Contacto</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="proveedores-tbody">
+                    <tr>
+                        <td colspan="7" class="loading">Cargando proveedores...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movimientos Page -->
+    <div class="page" id="movimientos-page">
+        <div class="page-header">
+            <button class="btn btn-success" id="btn-nueva-entrada">
+                <i class="fas fa-arrow-down"></i> Nueva Entrada
+            </button>
+            <button class="btn btn-danger" id="btn-nueva-salida">
+                <i class="fas fa-arrow-up"></i> Nueva Salida
+            </button>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <table class="data-table" id="movimientos-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Producto</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Observación</th>
+                    </tr>
+                    </thead>
+                    <tbody id="movimientos-tbody">
+                    <tr>
+                        <td colspan="6" class="loading">Cargando movimientos...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Bajo Page -->
+    <div class="page" id="stock-bajo-page">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Productos con Stock Crítico</h3>
+            </div>
+            <div class="card-body">
+                <div id="stock-bajo-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Producto -->
+<div class="modal" id="modal-producto">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-producto-title">Nuevo Producto</h3>
+            <button class="btn-close" onclick="closeModal('modal-producto')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-producto">
+                <input type="hidden" id="producto-id">
+                <div class="form-group">
+                    <label>Nombre <span class="required">*</span></label>
+                    <input type="text" id="producto-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="producto-descripcion" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio Unitario <span class="required">*</span></label>
+                        <input type="number" id="producto-precio" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Actual <span class="required">*</span></label>
+                        <input type="number" id="producto-stock-actual" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Mínimo <span class="required">*</span></label>
+                        <input type="number" id="producto-stock-minimo" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoría <span class="required">*</span></label>
+                        <select id="producto-categoria" required>
+                            <option value="">Seleccione...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Proveedor <span class="required">*</span></label>
+                        <select id="producto-proveedor" required>
+                            <option value="">Seleccione...</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-producto')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarProducto()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Categoría -->
+<div class="modal" id="modal-categoria">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h3 id="modal-categoria-title">Nueva Categoría</h3>
+            <button class="btn-close" onclick="closeModal('modal-categoria')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-categoria">
+                <input type="hidden" id="categoria-id">
+                <div class="form-group">
+                    <label>Nombre <span class="required">*</span></label>
+                    <input type="text" id="categoria-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="categoria-descripcion" rows="3"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-categoria')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarCategoria()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Proveedor -->
+<div class="modal" id="modal-proveedor">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-proveedor-title">Nuevo Proveedor</h3>
+            <button class="btn-close" onclick="closeModal('modal-proveedor')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-proveedor">
+                <input type="hidden" id="proveedor-id">
+                <div class="form-group">
+                    <label>Nombre <span class="required">*</span></label>
+                    <input type="text" id="proveedor-nombre" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Contacto <span class="required">*</span></label>
+                        <input type="text" id="proveedor-contacto" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="tel" id="proveedor-telefono">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" id="proveedor-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <textarea id="proveedor-direccion" rows="2"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-proveedor')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarProveedor()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Movimiento -->
+<div class="modal" id="modal-movimiento">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-movimiento-title">Nuevo Movimiento</h3>
+            <button class="btn-close" onclick="closeModal('modal-movimiento')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-movimiento">
+                <input type="hidden" id="movimiento-tipo">
+                <div class="form-group">
+                    <label>Producto <span class="required">*</span></label>
+                    <select id="movimiento-producto" required>
+                        <option value="">Seleccione...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad <span class="required">*</span></label>
+                    <input type="number" id="movimiento-cantidad" min="1" required>
+                </div>
+                <div class="form-group" id="movimiento-proveedor-group">
+                    <label>Proveedor <span class="required">*</span></label>
+                    <select id="movimiento-proveedor">
+                        <option value="">Seleccione...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="movimiento-motivo-group" style="display: none;">
+                    <label>Motivo <span class="required">*</span></label>
+                    <input type="text" id="movimiento-motivo">
+                </div>
+                <div class="form-group">
+                    <label>Observación</label>
+                    <textarea id="movimiento-observacion" rows="2"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-movimiento')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarMovimiento()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notification-text"></span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
