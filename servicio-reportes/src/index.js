@@ -26,7 +26,7 @@ app.get('/reportes/top-productos', async (req, res) => {
     const { inicio, fin } = req.query;
     try {
         let query = `
-       SELECT p.nombre, COUNT(m.id) as total_salidas 
+        SELECT p.nombre, SUM(m.cantidad) as total_salidas
        FROM movimientos_inventario m
        JOIN productos p ON m.producto_id = p.id
        WHERE m.tipo_movimiento = 'SALIDA' 
